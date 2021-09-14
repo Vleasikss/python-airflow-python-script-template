@@ -64,24 +64,21 @@ def someCallable(ds, **kwargs):
 t3 = PythonOperator(
     task_id = "python",
     python_callable=someCallable,
-    dag=dag
+    dag=dag,
 )
 
-SNOWFLAKE_SCHEMA = 'public'
-SNOWFLAKE_ROLE = 'SYSADMIN'
-SNOWFLAKE_WAREHOUSE = 'TEST_WH'
-SNOWFLAKE_CONN_ID = 'snowflake'
-SQL_SELECT_STATEMENT = 'SELECT * FROM BILLING WHERE SHOP_ID = 1 LIMIT 10'
+SNOWFLAKE_SCHEMA = 'YOUR-SCHEMA'
+SNOWFLAKE_WAREHOUSE = 'WAREHOUSE'
+SNOWFLAKE_CONN_ID = 'CONNECTION_ID'
+SQL_SELECT_STATEMENT = 'some sql statement'
 SNOWFLAKE_DATABASE = 'test_db'
 t4 = SnowflakeOperator(
     task_id='snowflake_op_with_params',
     dag=dag,
     snowflake_conn_id=SNOWFLAKE_CONN_ID,
     sql=SQL_SELECT_STATEMENT,
-    warehouse=SNOWFLAKE_WAREHOUSE,
     database=SNOWFLAKE_DATABASE,
     schema=SNOWFLAKE_SCHEMA,
-    role=SNOWFLAKE_ROLE,
 )
 
 # t2 will depend on t1
@@ -91,7 +88,7 @@ t4 = SnowflakeOperator(
 
 t1 >> [t2, t3]
 
-t4 >> t3
+t4 >> t1
 
 # similar to above where t3 will depend on t1
 # t3.set_downstream(t1)
